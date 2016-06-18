@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.flatironschool.javacs;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Implementation of a Map using a List of entries, so most
  * operations are linear time.
- * 
+ *
  * @author downey
  * @param <K>
  * @param <V>
@@ -26,12 +26,12 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 	public class Entry implements Map.Entry<K, V> {
 		private K key;
 		private V value;
-		
+
 		public Entry(K key, V value) {
 			this.key = key;
 			this.value = value;
 		}
-		
+
 		@Override
 		public K getKey() {
 			return key;
@@ -46,7 +46,7 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 			return value;
 		}
 	}
-		
+
 	@Override
 	public void clear() {
 		entries.clear();
@@ -58,18 +58,23 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 	}
 
 	/**
-	 * Returns the entry that contains the target key, or null if there is none. 
-	 * 
+	 * Returns the entry that contains the target key, or null if there is none.
+	 *
 	 * @param target
 	 */
 	private Entry findEntry(Object target) {
         // TODO: fill this in
+		for (Entry entry : entries) {
+				if (equals(entry.getKey(), target)) {
+					return entry;
+				}
+		}
 		return null;
 	}
 
 	/**
 	 * Compares two keys or two values, handling null correctly.
-	 * 
+	 *
 	 * @param target
 	 * @param obj
 	 * @return
@@ -96,10 +101,20 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Returns the value of the entry that contains key, or null if there is none.
+	 *
+	 * @param key
+	 */
 	@Override
 	public V get(Object key) {
         // TODO: fill this in.
-		return null;
+		Entry entry = findEntry(key);
+		if (entry == null) {
+			return null;
+		} else {
+			return entry.getValue();
+		}
 	}
 
 	@Override
@@ -119,7 +134,19 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 	@Override
 	public V put(K key, V value) {
         // TODO: fill this in.
-        return null;
+				Entry prevEntry = findEntry(key);
+
+				/* add entry if there isn't a previous entry with this key;
+				 * otherwise change the entry */
+				if (prevEntry == null) {
+					Entry entry = new Entry(key, value);
+					entries.add(entry);
+					return null;
+				} else {
+					V prevValue = prevEntry.getValue();
+					prevEntry.setValue(value);
+					return prevValue;
+				}
 	}
 
 	@Override
@@ -129,10 +156,26 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 		}
 	}
 
+	/**
+	 * Removes the mapping for key from map, if present.
+	 * Returns value to which map previously associated key,
+	 * or null if map contained no mapping for key.
+	 *
+	 * @param key
+	 */
 	@Override
 	public V remove(Object key) {
         // TODO: fill this in.
-        return null;
+				Entry prevEntry = findEntry(key);
+
+				/* remove entry iff there is a previous entry with this key */
+				if (prevEntry == null) {
+					return null;
+				} else {
+					V prevValue = prevEntry.getValue();
+					entries.remove(prevEntry);
+					return prevValue;
+				}
 	}
 
 	@Override
@@ -148,7 +191,7 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 		}
 		return set;
 	}
-	
+
 	/**
 	 * @param args
 	 */
@@ -158,7 +201,7 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 		map.put("Word2", 2);
 		Integer value = map.get("Word1");
 		System.out.println(value);
-		
+
 		for (String key: map.keySet()) {
 			System.out.println(key + ", " + map.get(key));
 		}
@@ -166,10 +209,10 @@ public class MyLinearMap<K, V> implements Map<K, V> {
 
 	/**
 	 * Returns a reference to `entries`.
-	 * 
+	 *
 	 * This is not part of the Map interface; it is here to provide the functionality
 	 * of `entrySet` in a way that is substantially simpler than the "right" way.
-	 * 
+	 *
 	 * @return
 	 */
 	protected Collection<? extends java.util.Map.Entry<K, V>> getEntries() {
